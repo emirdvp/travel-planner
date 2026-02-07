@@ -1,77 +1,5 @@
 const API_BASE = "http://localhost:4000/api";
 
-// Route database with estimated times
-const routeDatabase = {
-  'Warsaw-Berlin': { plane: '1h 30min', train: '6h', bus: '8h', car: '5h 30min' },
-  'Warsaw-Vienna': { plane: '1h 30min', train: '7h', bus: '9h', car: '6h 30min' },
-  'Warsaw-Rzeszów': { train: '6h', bus: '5h', car: '4h' },
-  'Warsaw-Prague': { plane: '1h 30min', train: '8h', bus: '10h', car: '7h' },
-  'Warsaw-Istanbul': { plane: '2h 30min' },
-  'Kraków-Prague': { train: '8h', bus: '9h', car: '6h' },
-  'Prague-Vienna': { train: '4h', bus: '5h', car: '3h 30min' },
-  'Budapest-Vienna': { train: '3h', bus: '3h 30min', car: '2h 30min' },
-  'Amsterdam-Paris': { train: '3h 20min', plane: '1h 20min', car: '5h' },
-  'Paris-Madrid': { plane: '2h', train: '10h' },
-  'Paris-Barcelona': { plane: '1h 50min', train: '6h 30min', car: '10h' },
-  'Paris-Nice': { plane: '1h 30min', train: '5h 30min', car: '9h' },
-  'Milan-Vienna': { plane: '1h 30min', train: '11h', car: '7h' },
-  'Milan-Rome': { plane: '1h 15min', train: '3h', car: '5h 30min' },
-  'Berlin-Amsterdam': { train: '6h', plane: '1h 30min', car: '6h 30min' },
-  'Istanbul-Vienna': { plane: '2h 30min' },
-  'Istanbul-Athens': { plane: '1h 30min' },
-  'Vienna-Budapest': { train: '3h', bus: '3h 30min', car: '2h 30min' },
-  'Berlin-Prague': { train: '4h 30min', bus: '5h', car: '3h 30min' },
-  'Barcelona-Madrid': { plane: '1h 20min', train: '2h 45min', car: '6h' },
-  'Barcelona-Nice': { plane: '1h 30min', train: '5h', car: '5h 30min' },
-  'Barcelona-Mallorca': { plane: '1h' },
-  'Lisbon-Madrid': { plane: '1h 20min', train: '10h', car: '6h' },
-  'Lisbon-Barcelona': { plane: '2h', car: '11h' },
-  'Athens-Santorini': { plane: '45min' },
-  'Rome-Athens': { plane: '2h' },
-  'Rome-Barcelona': { plane: '2h', train: '20h' },
-  'Dubrovnik-Athens': { plane: '1h 45min' },
-  'Nice-Milan': { train: '5h', car: '3h 30min' },
-  'Amsterdam-Berlin': { train: '6h', plane: '1h 30min', car: '6h 30min' },
-  'Vienna-Prague': { train: '4h', bus: '5h', car: '3h 30min' }
-};
-
-function getRouteKey(origin, destination) {
-  const key1 = `${origin}-${destination}`;
-  const key2 = `${destination}-${origin}`;
-  return routeDatabase[key1] || routeDatabase[key2];
-}
-
-function updateRouteInfo() {
-  const origin = document.getElementById('trip-origin').value.trim();
-  const destination = document.getElementById('trip-destination').value.trim();
-  const transport = document.getElementById('trip-transport').value;
-  const routeInfo = document.getElementById('route-info');
-  const routeInfoText = document.getElementById('route-info-text');
-  
-  if (origin && destination && origin !== destination) {
-    const times = getRouteKey(origin, destination);
-    
-    if (times) {
-      if (transport && times[transport.toLowerCase()]) {
-        routeInfoText.innerHTML = `⏱️ Estimated time: <strong>${times[transport.toLowerCase()]}</strong> by ${transport}`;
-        routeInfo.classList.remove('hidden');
-      } else if (!transport) {
-        const timeOptions = Object.entries(times)
-          .map(([mode, time]) => `${mode.charAt(0).toUpperCase() + mode.slice(1)}: ${time}`)
-          .join(' • ');
-        routeInfoText.innerHTML = `⏱️ Available routes: ${timeOptions}`;
-        routeInfo.classList.remove('hidden');
-      } else {
-        routeInfo.classList.add('hidden');
-      }
-    } else {
-      routeInfo.classList.add('hidden');
-    }
-  } else {
-    routeInfo.classList.add('hidden');
-  }
-}
-
 // Helper function to format dates
 function formatDate(dateString) {
   // Parse date as UTC to avoid timezone shifts
@@ -224,9 +152,7 @@ async function loadTrips() {
       
       let transportDisplay = '';
       if (trip.transport) {
-        const times = getRouteKey(trip.origin, trip.destination);
-        const estimatedTime = times && times[trip.transport.toLowerCase()] ? ` - ${times[trip.transport.toLowerCase()]}` : '';
-        transportDisplay = `<div class="trip-transport">${transportIcon} ${trip.transport}${estimatedTime}</div>`;
+        transportDisplay = `<div class="trip-transport">${transportIcon} ${trip.transport}</div>`;
       }
       
       card.innerHTML = `
